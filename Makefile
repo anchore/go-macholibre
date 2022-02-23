@@ -99,6 +99,10 @@ check-licenses: ## Ensure transitive dependencies are compliant with the current
 check-go-mod-tidy:
 	@ .github/scripts/go-mod-tidy-check.sh && echo "go.mod and go.sum are tidy!"
 
+.PHONY: fixtures
+fixtures:
+	cd test-fixtures && make
+
 .PHONY: unit
 unit: $(RESULTSDIR)  ## Run unit tests (with coverage)
 	$(call title,Running unit tests)

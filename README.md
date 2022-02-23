@@ -10,7 +10,25 @@ install and initialize git-lfs to work with this data:
 
 ```
 git lfs install
+git lfs pull
 ```
 
-Note on testing: since `lipo` is used to verify that the resulting binaries are as expected, these test fixtures 
+Grab local tooling:
+```
+make bootstrap
+```
+
+To run tests:
+```
+make fixtures
+make unit
+```
+
+_Note on testing_: since `lipo` is used to verify that the resulting binaries are as expected, these test fixtures
 can only be generated on a Mac.
+
+
+To run all checks:
+```
+make
+```
