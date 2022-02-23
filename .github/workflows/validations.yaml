@@ -19,11 +19,6 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
 
       - uses: actions/checkout@v2
-        with:
-          lfs: true
-
-      - name: Checkout LFS objects
-        run: git lfs checkout
 
       - name: Restore tool cache
         id: tool-cache
@@ -61,6 +56,11 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
 
       - uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      - name: Checkout LFS objects
+        run: git lfs checkout
 
       - name: Restore tool cache
         id: tool-cache

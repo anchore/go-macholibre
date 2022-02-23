@@ -1,4 +1,4 @@
-module github.com/anchore/go-macho-libre
+module github.com/anchore/go-macholibre
 
 go 1.17
 

@@ -1,4 +1,4 @@
-# go-macho-libre
+# go-macholibre
 
 A library for dealing with wrapping and unwrapping Mach-O multi-architecture binaries (a.k.a. Universal binaries). 
 
