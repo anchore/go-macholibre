@@ -77,6 +77,59 @@ func TestExtractBinariesTo(t *testing.T) {
 	}
 }
 
+func TestExtractReaders(t *testing.T) {
+	//runMakeTarget(t, "fixture-ls")
+
+	tests := []struct {
+		name                string
+		universalBinaryPath string
+		expected            []ExtractedReader
+	}{
+		{
+			name:                "extract binaries from universal binary",
+			universalBinaryPath: asset(t, "ls_universal_signed"),
+			expected: []ExtractedReader{
+				{
+					UniversalArchHeader: UniversalArchHeader{
+						UniversalArchInfo: UniversalArchInfo{
+							CPU: macho.CpuAmd64,
+						},
+						Offset: 0x4000,
+						Size:   0x11c60,
+					},
+				},
+				{
+					UniversalArchHeader: UniversalArchHeader{
+						UniversalArchInfo: UniversalArchInfo{
+							CPU: macho.CpuArm64,
+						},
+						Offset: 0x18000,
+						Size:   0x15aa0,
+					},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f, err := os.Open(tt.universalBinaryPath)
+			require.NoError(t, err)
+
+			actual, err := ExtractReaders(f)
+			require.NoError(t, err)
+			require.Len(t, actual, len(tt.expected))
+
+			// assert each file is a macho binary
+			for idx, a := range actual {
+				// note: we don't compare the subCPU
+				assert.Equal(t, tt.expected[idx].UniversalArchInfo.CPU, a.CPU)
+				assert.Equal(t, tt.expected[idx].UniversalArchHeader.Offset, a.Offset)
+				assert.Equal(t, tt.expected[idx].UniversalArchHeader.Size, a.Size)
+			}
+		})
+	}
+}
+
 func TestPackageUniversalBinary(t *testing.T) {
 	//runMakeTarget(t, "fixture-ls")
 

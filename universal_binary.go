@@ -48,6 +48,11 @@ type ExtractedFile struct {
 	UniversalArchInfo
 }
 
+type ExtractedReader struct {
+	Reader io.ReaderAt
+	UniversalArchHeader
+}
+
 // NewUniversalFile creates a new universal file object
 func NewUniversalFile() UniversalFile {
 	return UniversalFile{
@@ -133,28 +138,52 @@ func IsUniversalMachoBinary(reader io.ReaderAt) bool {
 	return !errors.Is(err, macho.ErrNotFat)
 }
 
+func ExtractReaders(r io.ReaderAt) ([]ExtractedReader, error) {
+	fatExe, err := macho.NewFatFile(r)
+	if err != nil {
+		return nil, err
+	}
+
+	var results []ExtractedReader
+	for _, arch := range fatExe.Arches {
+		fr := io.NewSectionReader(r, int64(arch.Offset), int64(arch.Size))
+		results = append(results, ExtractedReader{
+			Reader: fr,
+			UniversalArchHeader: UniversalArchHeader{
+				UniversalArchInfo: UniversalArchInfo{
+					CPU:    arch.Cpu,
+					SubCPU: arch.SubCpu,
+				},
+				Offset: arch.Offset,
+				Size:   arch.Size,
+			},
+		})
+	}
+
+	return results, nil
+}
+
 // Extract takes a reader to a Mach-o universal binary and unpacks all contained binaries to the given directory.
 func Extract(reader io.ReaderAt, dir string) ([]ExtractedFile, error) {
-	ff, err := macho.NewFatFile(reader)
+	ers, err := ExtractReaders(reader)
 	if err != nil {
 		return nil, err
 	}
 
 	var results []ExtractedFile
-	for _, m := range ff.Arches {
-		header := m.FatArchHeader
-		f, err := os.CreateTemp(dir, fmt.Sprintf("bin-%s-", header.Cpu.String()))
+	for _, e := range ers {
+		f, err := os.CreateTemp(dir, fmt.Sprintf("bin-%s-", e.CPU.String()))
 		if err != nil {
 			return nil, fmt.Errorf("unable to create temp file for sub-binary: %w", err)
 		}
 
-		w, err := io.Copy(f, io.NewSectionReader(reader, int64(header.Offset), int64(header.Size)))
+		w, err := io.Copy(f, io.NewSectionReader(reader, int64(e.Offset), int64(e.Size)))
 		if err != nil {
 			return nil, fmt.Errorf("unable to copy sub-binary: %w", err)
 		}
 
-		if w != int64(header.Size) {
-			return nil, fmt.Errorf("unexpected binary size: %d != %d", w, header.Size)
+		if w != int64(e.Size) {
+			return nil, fmt.Errorf("unexpected binary size: %d != %d", w, e.Size)
 		}
 
 		if err = f.Close(); err != nil {
@@ -162,11 +191,8 @@ func Extract(reader io.ReaderAt, dir string) ([]ExtractedFile, error) {
 		}
 
 		results = append(results, ExtractedFile{
-			Path: f.Name(),
-			UniversalArchInfo: UniversalArchInfo{
-				CPU:    header.Cpu,
-				SubCPU: header.SubCpu,
-			},
+			Path:              f.Name(),
+			UniversalArchInfo: e.UniversalArchInfo,
 		})
 	}
 	return results, nil
