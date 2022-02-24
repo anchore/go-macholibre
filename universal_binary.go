@@ -48,8 +48,13 @@ type ExtractedFile struct {
 	UniversalArchInfo
 }
 
+type SectionReader interface {
+	io.Reader
+	io.ReaderAt
+}
+
 type ExtractedReader struct {
-	Reader io.ReaderAt
+	Reader SectionReader
 	UniversalArchHeader
 }
 
@@ -177,7 +182,7 @@ func Extract(reader io.ReaderAt, dir string) ([]ExtractedFile, error) {
 			return nil, fmt.Errorf("unable to create temp file for sub-binary: %w", err)
 		}
 
-		w, err := io.Copy(f, io.NewSectionReader(reader, int64(e.Offset), int64(e.Size)))
+		w, err := io.Copy(f, e.Reader)
 		if err != nil {
 			return nil, fmt.Errorf("unable to copy sub-binary: %w", err)
 		}

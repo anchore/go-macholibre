@@ -78,16 +78,21 @@ func TestExtractBinariesTo(t *testing.T) {
 }
 
 func TestExtractReaders(t *testing.T) {
-	//runMakeTarget(t, "fixture-ls")
-
 	tests := []struct {
 		name                string
 		universalBinaryPath string
 		expected            []ExtractedReader
+		wantErr             require.ErrorAssertionFunc
 	}{
+		{
+			name:                "file not found",
+			universalBinaryPath: "/tick/tick/boom",
+			wantErr:             require.Error,
+		},
 		{
 			name:                "extract binaries from universal binary",
 			universalBinaryPath: asset(t, "ls_universal_signed"),
+			wantErr:             require.NoError,
 			expected: []ExtractedReader{
 				{
 					UniversalArchHeader: UniversalArchHeader{
@@ -113,10 +118,10 @@ func TestExtractReaders(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f, err := os.Open(tt.universalBinaryPath)
-			require.NoError(t, err)
+			tt.wantErr(t, err)
 
 			actual, err := ExtractReaders(f)
-			require.NoError(t, err)
+			tt.wantErr(t, err)
 			require.Len(t, actual, len(tt.expected))
 
 			// assert each file is a macho binary
