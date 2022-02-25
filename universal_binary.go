@@ -48,13 +48,11 @@ type ExtractedFile struct {
 	UniversalArchInfo
 }
 
-type SectionReader interface {
-	io.Reader
-	io.ReaderAt
-}
-
 type ExtractedReader struct {
-	Reader SectionReader
+	Reader interface {
+		io.Reader
+		io.ReaderAt
+	}
 	UniversalArchHeader
 }
 
