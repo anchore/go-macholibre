@@ -218,60 +218,60 @@ func TestIsUniversalMachoBinary(t *testing.T) {
 }
 
 //// make will run the default make target for the given test fixture path
-// func runMakeTarget(t *testing.T, fixtureName string) {
-// 	cwd, err := os.Getwd()
-// 	if err != nil {
-// 		t.Errorf("unable to get cwd: %+v", err)
-// 	}
-// 	fixtureDir := filepath.Join(cwd, "test-fixtures/", fixtureName)
-
-// 	t.Logf("Generating Fixture in %q", fixtureDir)
-
-// 	cmd := exec.Command("make")
-// 	cmd.Dir = fixtureDir
-
-// 	stderr, err := cmd.StderrPipe()
-// 	if err != nil {
-// 		t.Fatalf("could not get stderr: %+v", err)
-// 	}
-// 	stdout, err := cmd.StdoutPipe()
-// 	if err != nil {
-// 		t.Fatalf("could not get stdout: %+v", err)
-// 	}
-
-// 	err = cmd.Start()
-// 	if err != nil {
-// 		t.Fatalf("failed to start cmd: %+v", err)
-// 	}
-
-// 	show := func(label string, reader io.ReadCloser) {
-// 		scanner := bufio.NewScanner(reader)
-// 		scanner.Split(bufio.ScanLines)
-// 		for scanner.Scan() {
-// 			t.Logf("%s: %s", label, scanner.Text())
-// 		}
-// 	}
-// 	go show("out", stdout)
-// 	go show("err", stderr)
-
-// 	if err := cmd.Wait(); err != nil {
-// 		if exiterr, ok := err.(*exec.ExitError); ok {
-// 			// The program has exited with an exit code != 0
-
-// 			// This works on both Unix and Windows. Although package
-// 			// syscall is generally platform dependent, WaitStatus is
-// 			// defined for both Unix and Windows and in both cases has
-// 			// an ExitStatus() method with the same signature.
-// 			if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
-// 				if status.ExitStatus() != 0 {
-// 					t.Fatalf("failed to generate fixture: rc=%d", status.ExitStatus())
-// 				}
-// 			}
-// 		} else {
-// 			t.Fatalf("unable to get generate fixture result: %+v", err)
-// 		}
-// 	}
-// }
+//func runMakeTarget(t *testing.T, fixtureName string) {
+//	cwd, err := os.Getwd()
+//	if err != nil {
+//		t.Errorf("unable to get cwd: %+v", err)
+//	}
+//	fixtureDir := filepath.Join(cwd, "test-fixtures/", fixtureName)
+//
+//	t.Logf("Generating Fixture in %q", fixtureDir)
+//
+//	cmd := exec.Command("make")
+//	cmd.Dir = fixtureDir
+//
+//	stderr, err := cmd.StderrPipe()
+//	if err != nil {
+//		t.Fatalf("could not get stderr: %+v", err)
+//	}
+//	stdout, err := cmd.StdoutPipe()
+//	if err != nil {
+//		t.Fatalf("could not get stdout: %+v", err)
+//	}
+//
+//	err = cmd.Start()
+//	if err != nil {
+//		t.Fatalf("failed to start cmd: %+v", err)
+//	}
+//
+//	show := func(label string, reader io.ReadCloser) {
+//		scanner := bufio.NewScanner(reader)
+//		scanner.Split(bufio.ScanLines)
+//		for scanner.Scan() {
+//			t.Logf("%s: %s", label, scanner.Text())
+//		}
+//	}
+//	go show("out", stdout)
+//	go show("err", stderr)
+//
+//	if err := cmd.Wait(); err != nil {
+//		if exiterr, ok := err.(*exec.ExitError); ok {
+//			// The program has exited with an exit code != 0
+//
+//			// This works on both Unix and Windows. Although package
+//			// syscall is generally platform dependent, WaitStatus is
+//			// defined for both Unix and Windows and in both cases has
+//			// an ExitStatus() method with the same signature.
+//			if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
+//				if status.ExitStatus() != 0 {
+//					t.Fatalf("failed to generate fixture: rc=%d", status.ExitStatus())
+//				}
+//			}
+//		} else {
+//			t.Fatalf("unable to get generate fixture result: %+v", err)
+//		}
+//	}
+//}
 
 // asset returns the path to the cached asset file for a generated test fixture
 func asset(t *testing.T, assetName string) string {
