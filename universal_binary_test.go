@@ -184,7 +184,8 @@ func TestPackageUniversalBinary(t *testing.T) {
 }
 
 func TestIsUniversalMachoBinary(t *testing.T) {
-	//runMakeTarget(t, "fixture-ls")
+	// runMakeTarget(t, "fixture-ls")
+	// runMakeTarget(t, "fixture-non-mach-o")
 
 	tests := []struct {
 		name       string
@@ -199,6 +200,11 @@ func TestIsUniversalMachoBinary(t *testing.T) {
 		{
 			name:       "negative case",
 			binaryPath: asset(t, "ls_amd64_signed"),
+			expected:   false,
+		},
+		{
+			name:       "negative case bin from different platform",
+			binaryPath: asset(t, "linux_amd64"),
 			expected:   false,
 		},
 	}

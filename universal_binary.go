@@ -3,7 +3,6 @@ package macho
 import (
 	"debug/macho"
 	"encoding/binary"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -135,10 +134,10 @@ func (u *UniversalFile) Write(writer io.Writer) error {
 	return nil
 }
 
-// IsUniversalMachoBinary returns true if this is a multi-architecture (universal) binary.
+// IsUniversalMachoBinary returns true if this is a valid multi-architecture (universal) binary.
 func IsUniversalMachoBinary(reader io.ReaderAt) bool {
 	_, err := macho.NewFatFile(reader)
-	return !errors.Is(err, macho.ErrNotFat)
+	return err == nil
 }
 
 func ExtractReaders(r io.ReaderAt) ([]ExtractedReader, error) {
