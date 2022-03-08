@@ -201,6 +201,11 @@ func TestIsUniversalMachoBinary(t *testing.T) {
 			binaryPath: asset(t, "ls_amd64_signed"),
 			expected:   false,
 		},
+		{
+			name:       "negative case bin from different platform",
+			binaryPath: asset(t, "linux_main"),
+			expected:   false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
