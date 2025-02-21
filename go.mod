@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/go-restruct/restruct v1.2.0-alpha
-	github.com/google/go-cmp v0.6.0
+	github.com/google/go-cmp v0.7.0
 	github.com/stretchr/testify v1.10.0
 )
 
