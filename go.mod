@@ -1,6 +1,6 @@
 module github.com/anchore/go-macholibre
 
-go 1.21
+go 1.26.2
 
 require (
 	github.com/go-restruct/restruct v1.2.0-alpha
